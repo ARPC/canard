@@ -46,9 +46,9 @@ class Ability
     end
 
     # If user has roles get those abilities
-    if @user.respond_to?(:roles)
+    if @user.respond_to?(Canard::Abilities.role_attribute)
       # Add roles on top of the base user abilities
-      @user.roles.each { |role| append_abilities(role) }
+      @user.public_send(Canard::Abilities.role_attribute).each { |role| append_abilities(role) }
     end
 
   end

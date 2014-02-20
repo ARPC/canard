@@ -3,10 +3,12 @@ module Canard
   
     @definitions      = {}
     @default_path     = 'app/abilities'
+    @role_attribute   = :role
 
     class << self
 
       attr_accessor :default_path
+      attr_accessor :role_attribute
       
       attr_writer :definition_paths
       
