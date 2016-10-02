@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     s.add_development_dependency "mongoid", "~> 3.0"
   end
 
-  s.add_runtime_dependency "cancan"
+  s.requirements << 'cancan for Rails3 and earlier or the Rails4 compatible cancancan fork.'
+  s.add_runtime_dependency "cancancan"
   s.add_runtime_dependency "role_model"
 end

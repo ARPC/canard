@@ -3,7 +3,7 @@ require 'test_helper'
 describe Ability do
 
   before do
-    Canard::Abilities.default_path = File.expand_path('../../dummy/app/abilities', __FILE__)
+    Canard::Abilities.definition_paths = [File.expand_path('../../dummy/app/abilities', __FILE__)]
     # reload abilities because the reloader will have removed them after the railtie ran
     Canard.find_abilities
   end
@@ -93,6 +93,29 @@ describe Ability do
 
     end
 
+    describe "a user with editor role" do
+      let(:user) { User.create(:roles => [:editor]) }
+      let(:member) { Member.create(:user => user) }
+      let(:other_user) { User.create }
+      let(:other_member) { Member.new(:user => other_user) }
+      subject { Ability.new(user) }
+
+      it "has all the abilities of the base class" do
+        subject.can?(:edit, member).must_equal true
+        subject.can?(:update, member).must_equal true
+
+        subject.cannot?(:edit, other_member).must_equal true
+        subject.cannot?(:update, other_member).must_equal true
+      end
+
+      it "has most of the abilities of authors, except it can't create Posts" do
+        subject.can?(:update, Post).must_equal true
+        subject.can?(:read, Post).must_equal true
+        subject.cannot?(:create, Post).must_equal true
+      end
+
+    end
+
     describe "with no user" do
 
       subject { Ability.new }
@@ -147,23 +170,6 @@ describe Ability do
         end
       end
 
-    end
-  end
-
-  describe "ability_key" do
-
-    it "returns a snake case version of the string" do
-      class_name = 'CamelCaseString'
-      key = :camel_case_string
-
-      Ability.new.send(:ability_key, class_name).must_equal key
-    end
-
-    it "prepends namespaces to the class name" do
-      class_name = 'Namespace::CamelCaseString'
-      key = :namespace_camel_case_string
-
-      Ability.new.send(:ability_key, class_name).must_equal key
     end
   end
 end
